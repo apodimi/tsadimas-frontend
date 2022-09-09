@@ -1,5 +1,5 @@
 import * as React from "react";
-import { HeadFC, Link } from "gatsby";
+import { HeadFC, Link, navigate } from "gatsby";
 import {
   Typography,
   Container,
@@ -11,8 +11,17 @@ import {
   Grid,
 } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const IndexPage = () => {
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
+
+  React.useEffect(() => {
+    if (!isAuthenticated) {
+      loginWithRedirect();
+    }
+  });
+
   return (
     <main>
       <Container component="main" maxWidth="xs">
@@ -32,45 +41,18 @@ const IndexPage = () => {
             Σύνδεση
           </Typography>
           <Box component="form" noValidate sx={{ mt: 1 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Κωδικός"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2, textTransform: "none" }}
-            >
-              Σύνδεση
-            </Button>
-            <Grid container>
-              <Grid item xs>
-                {/* <Link href="#" variant="body2">
-                  Forgot password?
-                </Link> */}
-              </Grid>
-              <Grid item>
-                <Link to="/signup">{"Δεν έχεις λογαριασμό? Εγγραφή"}</Link>
-              </Grid>
-            </Grid>
+            {!isAuthenticated && (
+              <Button
+                type="submit"
+                fullWidth
+                size="large"
+                variant="contained"
+                onClick={loginWithRedirect}
+                sx={{ mt: 3, mb: 2, textTransform: "none" }}
+              >
+                Σύνδεση
+              </Button>
+            )}
           </Box>
         </Box>
       </Container>

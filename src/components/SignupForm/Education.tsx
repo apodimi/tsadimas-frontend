@@ -11,8 +11,9 @@ import {
   TextField,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { Controller } from "react-hook-form";
 
-const FormFields = () => {
+const FormFields = (control: any) => {
   const [age, setAge] = React.useState("");
 
   const handleChange = (event: any) => {
@@ -23,41 +24,76 @@ const FormFields = () => {
       <Paper variant="outlined" sx={{ p: 4 }}>
         <Grid container gap={2} direction="column">
           <Grid item>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
+            <Controller
+              control={control}
               name="uni"
-              label="Ίδρυμα"
-              type="uni"
-              id="uni"
+              rules={{ required: "Το πεδίο απαιτείται" }}
+              render={({
+                field,
+                fieldState: { invalid, isTouched, isDirty, error },
+                formState,
+              }) => (
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  label="Ίδρυμα"
+                  error={!!error}
+                  helperText={error?.message}
+                  type="uni"
+                  id="uni"
+                  {...field}
+                />
+              )}
             />
           </Grid>
           <Grid item>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Επίπεδο</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={age}
-                label="Επίπεδο"
-                onChange={handleChange}
-              >
-                <MenuItem value={"Προπτυχιακό"}>Προπτυχιακό</MenuItem>
-                <MenuItem value={"Μεταπτυχιακό"}>Μεταπτυχιακό</MenuItem>
-                <MenuItem value={"Διδακτορικό"}>Διδακτορικό</MenuItem>
-              </Select>
-            </FormControl>
+            <Controller
+              control={control}
+              name="level"
+              rules={{ required: "Το πεδίο απαιτείται" }}
+              render={({
+                field,
+                fieldState: { invalid, isTouched, isDirty, error },
+                formState,
+              }) => (
+                <FormControl fullWidth>
+                  <InputLabel id="level">Επίπεδο</InputLabel>
+                  <Select
+                    labelId="level"
+                    id="level"
+                    error={!!error}
+                    label="Επίπεδο"
+                    {...field}
+                  >
+                    <MenuItem value={"Προπτυχιακό"}>Προπτυχιακό</MenuItem>
+                    <MenuItem value={"Μεταπτυχιακό"}>Μεταπτυχιακό</MenuItem>
+                    <MenuItem value={"Διδακτορικό"}>Διδακτορικό</MenuItem>
+                  </Select>
+                </FormControl>
+              )}
+            />
           </Grid>
           <Grid item>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
+            <Controller
+              control={control}
               name="duration"
-              label="Διάρκεια"
-              type="duration"
-              id="duration"
+              rules={{ required: "Το πεδίο απαιτείται" }}
+              render={({
+                field,
+                fieldState: { invalid, isTouched, isDirty, error },
+                formState,
+              }) => (
+                <TextField
+                  margin="normal"
+                  fullWidth
+                  label="Διάρκεια"
+                  error={!!error}
+                  helperText={error?.message}
+                  type="duration"
+                  id="duration"
+                  {...field}
+                />
+              )}
             />
           </Grid>
         </Grid>
@@ -66,16 +102,12 @@ const FormFields = () => {
   );
 };
 
-const Education = () => {
+const Education = ({ control }: any) => {
   return (
     <main>
       <Grid container gap={2} direction="column">
-        <Grid item>{FormFields()}</Grid>
-        <Grid item>
-          <Button color="primary" variant="contained" fullWidth>
-            <AddIcon />
-          </Button>
-        </Grid>
+        <Grid item>{FormFields(control)}</Grid>
+        <Grid item></Grid>
       </Grid>
     </main>
   );

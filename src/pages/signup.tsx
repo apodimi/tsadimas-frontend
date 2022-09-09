@@ -8,21 +8,38 @@ import {
   Step,
   StepLabel,
   Stepper,
+  TextField,
   Typography,
 } from "@mui/material";
 import StudentInfo from "../components/SignupForm/StudentInfo";
 import Education from "../components/SignupForm/Education";
+import { Controller, useForm } from "react-hook-form";
+import { DevTool } from "@hookform/devtools";
+import Experience from "../components/SignupForm/Experience";
+import Scholarship from "../components/SignupForm/Scholarship";
 
-const steps = ["Στοιχεία Φοιτητή", "Σπουδές", "Εμπειρία"];
+const steps = ["Στοιχεία Φοιτητή", "Σπουδές", "Εμπειρία", "Υποτροφίες"];
 
-const getStepContent = (step: any) => {
+interface FormFields {
+  firstName: string;
+  lastName: string;
+  uni: string;
+  level: string;
+  duration: string;
+  experience: string;
+  scholarship: string;
+}
+
+const getStepContent = (step: any, control: any) => {
   switch (step) {
     case 0:
-      return <StudentInfo />;
+      return <StudentInfo control={control} />;
     case 1:
-      return <Education />;
+      return <Education control={control} />;
     case 2:
-      return "Review";
+      return <Experience control={control} />;
+    case 3:
+      return <Scholarship control={control} />;
     default:
       throw new Error("Unknown step");
   }
@@ -39,11 +56,32 @@ const Signup = () => {
     setActiveStep(activeStep - 1);
   };
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<FormFields>({
+    mode: "onChange",
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      uni: "",
+      level: "",
+      duration: "",
+      experience: "",
+      scholarship: "",
+    },
+  });
+
+  const onSubmit = (data: FormFields) => {
+    console.log(data);
+  };
+
   return (
     <main>
       <Container component="main" maxWidth="sm" sx={{ mb: 4, p: 10 }}>
         <Typography component="h1" variant="h4" align="center">
-          Σύνδεση
+          Εγγραφή
         </Typography>
         <Stepper activeStep={activeStep} sx={{ pt: 3, pb: 5 }}>
           {steps.map((label) => (
@@ -52,21 +90,16 @@ const Signup = () => {
             </Step>
           ))}
         </Stepper>
-        <React.Fragment>
+        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
           {activeStep === steps.length ? (
             <React.Fragment>
               <Typography variant="h5" gutterBottom>
-                Thank you for your order.
-              </Typography>
-              <Typography variant="subtitle1">
-                Your order number is #2001539. We have emailed your order
-                confirmation, and will send you an update when your order has
-                shipped.
+                Επιτυχής Εγγραφή
               </Typography>
             </React.Fragment>
           ) : (
             <React.Fragment>
-              {getStepContent(activeStep)}
+              {getStepContent(activeStep, control)}
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 {activeStep !== 0 && (
                   <Button
@@ -80,6 +113,8 @@ const Signup = () => {
                 <Button
                   variant="contained"
                   onClick={handleNext}
+                  disabled={!isValid}
+                  type="submit"
                   sx={{ mt: 3, ml: 1, textTransform: "none" }}
                 >
                   {activeStep === steps.length - 1 ? "Ολοκλήρωση" : "Επόμενο"}
@@ -87,8 +122,9 @@ const Signup = () => {
               </Box>
             </React.Fragment>
           )}
-        </React.Fragment>
+        </Box>
       </Container>
+      <DevTool control={control} /> {/* set up the dev tool */}
     </main>
   );
 };
